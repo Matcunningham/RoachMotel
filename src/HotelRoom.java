@@ -7,7 +7,7 @@ public class HotelRoom extends Room
 
 	public HotelRoom ()
 	{
-		vacant = true;
+		vacant = false;
 	}
 
 	public double getCost ()

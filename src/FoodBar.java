@@ -1,7 +1,8 @@
 //A concrete decorator for Room
 public class FoodBar extends HotelAmenity
 {
-	protected Room room = null;
+	//protected Room room = null;
+        private Room room;
 	private static final double COST = 10;
 
 	public FoodBar (Room room)
@@ -21,6 +22,6 @@ public class FoodBar extends HotelAmenity
 
 	public String toString ()
 	{
-		return room.toString() + " with FoodBar";
+		return room.toString() + ", with FoodBar";
 	}
 }

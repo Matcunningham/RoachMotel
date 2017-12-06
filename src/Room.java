@@ -1,7 +1,8 @@
 //The abstract Component Room
 public abstract class Room
 {
-	public abstract double getCost ();
+    //private String ColonyCheckedInName;???
+    public abstract double getCost ();
 
-	public abstract boolean isVacant ();
+    public abstract boolean isVacant (); // might not need this
 }

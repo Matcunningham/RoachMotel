@@ -1,7 +1,8 @@
 //A concrete decorator for Room
 public class Spa extends HotelAmenity
 {
-	protected Room room = null;
+	//protected Room room = null;
+        private Room room;
 	private static final double COST = 20;
 
 	public Spa (Room room)
@@ -21,6 +22,6 @@ public class Spa extends HotelAmenity
 
 	public String toString ()
 	{
-		return room.toString() + " with Spa";
+		return room.toString() + ", with Spa";
 	}
 }

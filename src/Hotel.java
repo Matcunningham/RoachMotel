@@ -56,16 +56,20 @@ public class Hotel implements Subject
             }
             else
             {
-                // this.registerObserver(colony);
+                this.registerObserver(colony);
                 System.out.println("No Vacany, you have been added to the waitinglist");
             }
         }
         
-        public void checkOut()
+        public void checkOut(RoachColony r)
         {
             if(!this.isVacant())
             {
-                
+                this.notifyObserver();
+                for(Observer o: observers)
+                {
+                    this.removeObserver(o);
+                }
             }
                 
         }

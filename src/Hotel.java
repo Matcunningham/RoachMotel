@@ -126,6 +126,9 @@ public class Hotel implements Subject
     @Override
     public void notifyObserver() 
     {
-        
+        for(Observer o: observers)
+        {
+            o.update(vacant);
+        }        
     }
 }

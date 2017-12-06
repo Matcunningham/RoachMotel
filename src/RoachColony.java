@@ -1,5 +1,3 @@
-
-
 public class RoachColony implements Observer
 {
     private String name;

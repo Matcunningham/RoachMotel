@@ -15,7 +15,7 @@ public class HotelRoom extends Room
 		return 50;
 	}
 
-	public boolean isVacant ()
+	public boolean isVacant () // might not need
 	{
 		return vacant;
 	}

@@ -3,14 +3,14 @@
 import java.lang.reflect.Constructor;
 import java.util.*;
 
-public class Hotel //implements Subject <-- TODO
+public class Hotel implements Subject
 {
 	private static final int SIZE = 2;
 	private static Hotel hotel = null;
         private boolean vacant = true;
 	private Room[] room = new Room[SIZE];
         private RoomFactory factory = new RoomFactory();
-        // TODO - Arraylist of observers
+        private ArrayList<Observer> observers;
 
 	private Hotel (){}
 
@@ -61,6 +61,15 @@ public class Hotel //implements Subject <-- TODO
             }
         }
         
+        public void checkOut()
+        {
+            if(!this.isVacant())
+            {
+                
+            }
+                
+        }
+        
 	// If any of the rooms are vacant, return true otherwise false
 	public boolean isVacant ()
 	{
@@ -101,4 +110,22 @@ public class Hotel //implements Subject <-- TODO
 			e.printStackTrace();
 		}
 	}
+
+    @Override
+    public void registerObserver(Observer o) 
+    {
+        observers.add(o);
+    }
+
+    @Override
+    public void removeObserver(Observer o) 
+    {
+        observers.remove(o);
+    }
+
+    @Override
+    public void notifyObserver() 
+    {
+        
+    }
 }

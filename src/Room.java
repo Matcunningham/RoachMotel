@@ -1,11 +1,7 @@
 //The abstract Component Room
 public abstract class Room
 {
+	protected boolean hasShower;
+	
 	public abstract int getCost();
-
-	public abstract boolean isVacant();
-
-	public abstract void book();
-
-	public abstract void vacate();
 }

@@ -1,5 +1,8 @@
-
-public interface Observer 
+public interface Observer
 {
-    public void update(boolean vacant);
+	void update();
+	
+	int getDays();
+	
+	void setDays(int stayTime);
 }

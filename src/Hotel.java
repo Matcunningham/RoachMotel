@@ -1,159 +1,120 @@
 //Singleton Hotel
-import java.lang.reflect.Constructor;
 import java.util.*;
 
 public class Hotel implements Subject
 {
-	private static final int SIZE = 2;
 	private static Hotel hotel = null;
-  private boolean vacant = true;
-	private Room[] room = new Room[SIZE];
-  private RoomFactory factory = new RoomFactory();
-  private ArrayList<Observer> observers;
-
-	private Hotel (){}
-
-
-	public static Hotel getInstance()
+	private static Room[] room = null;
+	private static RoomFactory factory = new RoomFactory();
+	private static LinkedList<Observer> observerQueue = new LinkedList<>();
+	private static HashMap<Observer,Integer> guestList = new HashMap<>();
+	private static int roomNumber = 0;
+	private static int days = 0;
+	private static int size = 0;
+	
+	private Hotel(int s)
+	{
+		size = s;
+		room = new Room[size];
+	}
+	// Creates an instance of Hotel
+	public static Hotel getInstance(int size)
 	{
 		if (hotel == null)
-			hotel = new Hotel();
+			hotel = new Hotel(size);
 		return hotel;
 	}
-   
-        public void checkIn(RoachColony colony)
-        {
-            if(this.isVacant())
-            {
-                int roomFinder = 0;
-                while(room[roomFinder] != null)
-                {
-                    roomFinder++;
-                }
-                ArrayList<String> amenities = new ArrayList<>();
-                Scanner in = new Scanner(System.in);
-                System.out.println("Would you like to add a spa package for $20? (yes/no) :");
-                if(in.next().equalsIgnoreCase("yes"))
-                {
-                    amenities.add("spa");
-                }
-                System.out.println("Would you like to add a food bar for $10? (yes/no) :");
-                if(in.next().equalsIgnoreCase("yes"))
-                {
-                    amenities.add("bar");
-                }
-                System.out.println("Would you like to add food bar auto refill for $5? (yes/no) :");
-                if(in.next().equalsIgnoreCase("yes"))
-                {
-                    amenities.add("refill");
-                }
-                System.out.println("Would you like to add an antispray shower for $25? (yes/no) :");
-                if(in.next().equalsIgnoreCase("yes"))
-                {
-                    amenities.add("shower");
-                }
-                room[roomFinder] = factory.createRoom(amenities);
-            }
-            else
-            {
-                this.registerObserver(colony);
-                System.out.println("No Vacany, you have been added to the waitinglist");
-            }
-        }
-        
-        public void checkOut(RoachColony r)
-        {
-            if(!this.isVacant())
-            {
-                this.notifyObserver();
-                for(Observer o: observers)
-                {
-                    this.removeObserver(o);
-                }
-            }
-                
-        }
-	// If any of the rooms are vacant, return true otherwise false
+	// Advances to the next day, notifying Observers
+	public void nextDay()
+	{
+		System.out.println("It is now the next day.");
+		notifyObserver();
+	}
+	// Returns true if the Room occupied by Observer has a Shower, otherwise return false
+	public boolean spray(Observer o)
+	{
+		roomNumber = guestList.get(o);
+		return room[roomNumber].hasShower;
+	}
+	// Prompts user to add any extra amenities and duration of visit
+	private void checkIn(Observer o)
+	{
+		roomNumber = 0;
+		while (room[roomNumber] != null)
+			roomNumber++;
+		
+		ArrayList<String> amenities = new ArrayList<>();
+		Scanner in = new Scanner(System.in);
+		System.out.println("Would you like to add a spa package for $20? (yes/no) :");
+		if (in.next().equalsIgnoreCase("yes"))
+			amenities.add("spa");
+		System.out.println("Would you like to add a food bar for $10? (yes/no) :");
+		if (in.next().equalsIgnoreCase("yes"))
+		{
+			amenities.add("bar");
+			System.out.println("Would you like to add food bar auto refill for $5? (yes/no) :");
+			if (in.next().equalsIgnoreCase("yes"))
+				amenities.add("refill");
+		}
+		System.out.println("Would you like to add an anti-spray shower for $25? (yes/no) :");
+		if (in.next().equalsIgnoreCase("yes"))
+			amenities.add("shower");
+		room[roomNumber] = factory.createRoom(amenities);
+		
+		System.out.println("How many days would you like to stay?");
+		days = in.nextInt();
+		in.nextLine();
+		o.setDays(days);
+		guestList.put(o, roomNumber);
+                System.out.println("You have been checked in to room # " + roomNumber + " for " + days + " days. It's a " + room[roomNumber]);
+                System.out.println();
+	}
+	// Returns true if any Room is open, otherwise return false
 	public boolean isVacant()
 	{
-		for (int i = 0; i < SIZE; i++)
+		for (int i = 0; i < size; i++)
 		{
-			if (room[i] == null) // changed from if (room[i].isVacant())
+			if (room[i] == null)
 				return true;
 		}
 		return false;
 	}
-
-	//Returns a String of the room at index i
-	public String get(int i)
+	// Adds Observer to guestList if vacant, otherwise adds to wait-list
+	public void registerObserver(Observer o)
 	{
-		return room[i].toString();
-	}
-
-	//Replaces a room in index i with a room decorated with class anyRoom
-	public void set(int i, Class<? extends Room> anyRoom)
-	{
-		// This file should not know any of the Decorator names but be able
-		// to invoke their constructors and decorate the Rooms in the array
-		Constructor<? extends Room> ctor = null;
-		try
+		if(isVacant())
 		{
-			ctor = anyRoom.getConstructor(Room.class);
+			System.out.println(o + " will now be checked in.");
+			checkIn(o);
 		}
-		catch (NoSuchMethodException e)
+		else
 		{
-			e.printStackTrace();
-		}
-		// Once the constructor is determined in runtime, it should
-		// try to override the Room in index i with a decorated one
-		try
-		{
-			room[i] = ctor.newInstance(room[i]);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
+			observerQueue.add(o);
+			System.out.println(o + " has been put on the wait-list");
 		}
 	}
-
-    @Override
-    public void registerObserver(Observer o) 
-    {
-        observers.add(o);
-    }
-
-    @Override
-    public void removeObserver(Observer o) 
-    {
-        observers.remove(o);
-    }
-
-    @Override
-    public void notifyObserver() 
-    {
-        for(Observer o: observers)
-        {
-            o.update(vacant);
-        }        
-    }
-	//Books a room at index i
-	public void book(int i)
+	// Removes Observer from guestList and adds an Observer in front of the queue, if any
+	public void removeObserver(Observer o)
 	{
-		room[i].book();
+		roomNumber = guestList.remove(o);
+		days = o.getDays();
+		int totalCost = days * room[roomNumber].getCost();
+		System.out.println("The price of your visit is $" + totalCost);
+		room[roomNumber] = null;
+		
+		if(!observerQueue.isEmpty())
+			registerObserver(observerQueue.remove());
 	}
-
-	//Books all rooms from begin to end
-	public void book(int begin, int end)
+	// Calls each Observer's update, except those that are added the same day
+	public void notifyObserver()
 	{
-		for (int i = begin; i < end; i++)
+		// The Set MUST be initialized with "new" otherwise
+		// we accidentally modify its contents while modifying
+		// the guestList, causing a ConcurrentModificationException
+		Set<Observer> copy = new HashSet<>(guestList.keySet());
+		for (Observer c : copy)
 		{
-			room[i].book();
+			c.update();
 		}
-	}
-
-	//Get cost of room at index i
-	public double getCost(int i)
-	{
-		return room[i].getCost();
 	}
 }
